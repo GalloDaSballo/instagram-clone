@@ -5,7 +5,7 @@ const passport = require('passport')
 const GoogleStrategy = require('passport-google-oauth20').Strategy
 const keys = require('../config/keys')
 const mongoose = require('mongoose')
-
+const Profiles = mongoose.model('profiles')
 const User = mongoose.model('users') //This way we get the Users Model
 
 passport.serializeUser((user, done) => {
@@ -47,6 +47,9 @@ passport.use(new GoogleStrategy(
     } else {
       //We create a new modelInstance then we save it and then we call done to it
       const user = await new User({googleId: profile.id}).save() //this is the model instance. We need to send it to the collection
+      const userProfile = await new Profiles({_user: user.id}).save()
+      console.log("NEW PROFILE")
+      console.log(userProfile)
       done(null, user)
     }
   }

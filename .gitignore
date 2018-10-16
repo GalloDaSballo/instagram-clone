@@ -61,3 +61,10 @@ typings/
 .next
 config/prod.js
 config/dev.js
+
+# Keys
+config/dev.js
+config/prod.js
+
+#Uploads
+uploads/

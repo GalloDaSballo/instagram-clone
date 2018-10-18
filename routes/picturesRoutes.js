@@ -11,6 +11,7 @@ module.exports = (app) => {
   app.get('/api/pictures', async (req,res) => {
     const pics = await picF.getPics()
     const profiles = await picF.getProfilesbyPicsId(pics)
+    console.log(profiles)
     const result = await picF.mergeIntoPicAndProfileObject(pics, profiles)
     res.send(result)
   })
@@ -36,7 +37,7 @@ module.exports = (app) => {
     // .then((coso) => console.log(coso))
     console.log(req.body) //Urlencoded stuff
     const {id} = req.user
-    const {pictureUrl} = req.body
+    const {pictureUrl} = req.body //Sent by the uploadRoutes.js
     let {description} = req.body
     if(!description)
       description = ''

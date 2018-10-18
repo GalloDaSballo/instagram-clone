@@ -18,9 +18,10 @@ module.exports.getProfilesbyPicsId = async (allPics) => {
   })
 
   const trimmedIds = _.uniq(allIds)
+  // console.log("trimmedIds ", trimmedIds)
   const profiles = await Promise.all(trimmedIds.map(async (id) => {
     //We need Promise.all to check for promises inside the array
-    const profile = await Profiles.findOne({_id: id})
+    const profile = await Profiles.findOne({_user: id})
     // console.log("Profile ", profile)
     // console.log("inside map")
     return profile
@@ -34,8 +35,10 @@ module.exports.mergeIntoPicAndProfileObject = async (pics, authors) => {
   // console.log("mergeIntoPicAndProfileObject")
   let coso = []
   pics.forEach(pic => {
-    const pic_user_id = pic._user
-    const profileObj = _.find(authors, {'_id': pic_user_id}) //The profile that created the picture
+    // console.log("Inside Mergert", pic._user)
+    // console.log("Authors", authors)
+    const pic_user_id = pic._user.toString() //Because we are using string instead of object reference
+    const profileObj = _.find(authors, {'_user': pic_user_id}) //The profile that created the picture
     let obj = {}
     obj.image = pic
     obj.profile = profileObj

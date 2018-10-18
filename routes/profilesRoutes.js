@@ -18,30 +18,20 @@ module.exports = (app) => {
 
   app.post('/api/profiles/:id', requireLogin, async (req, res) => {
 
-    const currentUser = req.user.id
+    const currentUser = req.user.id //Managed by passport
     console.log(currentUser)
-    const requestedUser = req.params.id
+    const requestedUser = req.params.id //The one we request
     console.log(requestedUser)
     const {userName, bio, link, picture} = req.body
 
     if(currentUser == requestedUser){
       //Can create or edit the profile
       //Check if profile exists -> update
-      const profile = await Profiles.findOne({_user: currentUser})
+        const profile = await Profiles.findOneAndUpdate(
+          {_user: currentUser},
+          {_user: currentUser, userName, bio, link, picture})
 
-      //TODO: As of now we allow pictures to come from anyplace in the world
-
-      if(!!profile){
-        //Update
-        console.log("Profile is being Updated")
-        const profile = await Profiles.updateOne({_user: currentUser, userName, bio, link, picture})
         res.send(profile)
-      } else {
-        //Create
-        console.log("Profile is being created")
-        const profile = await Profiles.create({_user: currentUser, userName, bio, link, picture})
-        res.send(profile)
-      }
     } else {
       res.status(401).send({error: `Can't edit a profile you don't own`})
     }

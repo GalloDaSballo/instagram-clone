@@ -11,15 +11,9 @@ module.exports = (app) => {
     const likes = await likeF.getLikes()
     const users = await likeF.GetUsersThatLikedByLikes(likes)
     const pictures = await likeF.GetPicturesLikedByLikes(likes)
-    pictures.forEach(pic => {console.log("In MAIN", pic.image._id)})
     const merged = likeF.MergeLikesWithUsersAndPictures(likes, users, pictures)
     res.send(merged)
-    //GetLikes( => likes)
-    //GetUsersThatLikedByLikes(likes => profiles)
-    //GetPicturesLikedByLikes(likes => pictures + profiles)
-    //MergeLikesWithUsersAndPictures(likes, profiles, pictures)
-    //return merged
-    //Actually need to send the picture and the user as well
+
   })
 
   app.post('/api/likes', requireLogin, async (req, res) => {

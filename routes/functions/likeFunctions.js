@@ -13,21 +13,22 @@ module.exports.getLikes = async () => {
 
 
 module.exports.GetUsersThatLikedByLikes = async (likes) => {
-  // console.log("GetUsersThatLikedByLikes")
+  console.log("GetUsersThatLikedByLikes")
   //Returns the profile info of the users that generated the like
   const allIds = likes.map(like => {
     return(like._user.toString())
   })
-  const trimmedIds = _.uniq(allIds)
 
+  const trimmedIds = _.uniq(allIds)
+  console.log(trimmedIds)
+  console.log("trimmedIds ", trimmedIds)
   const profiles = await Promise.all(trimmedIds.map(async (id) => {
     //We need Promise.all to check for promises inside the array
-    const profile = await Profiles.findOne({_id: id})
-    // console.log("Profile ", profile)
-    // console.log("inside map")
+    const profile = await Profiles.findOne({_user: id})
+    console.log("Profile ", profile)
+    console.log("inside map")
     return profile
   }))
-  // console.log("GetUsersThatLikedByLikes ", profiles)
   return profiles
 }
 
@@ -50,27 +51,38 @@ module.exports.MergeLikesWithUsersAndPictures = (likes, profiles, pictures) => {
   let coso = []
   likes.forEach(like => {
     const like_user_id = like._user
+    console.log("like_user_idLL", like_user_id)
     const like_picture_id = like._picture
 
-    const profileObj = _.find(profiles, {'_id': like_user_id}) //The profile that created the picture
-    // console.log("Profile OBK", profileObj)
-    // let pictureObj = _.find(pictures, {'.image._id': like_picture_id}) //.find doesn0t seem to go 2 levels deep
-    let found = false
-    let i = 0
-    while(!found && i < pictures.length){
-      if(pictures[i].image._id == like_picture_id) {
-        found = true
-        pictureObj = pictures[i]
+    let profileObj
+    let foundProf = false
+    let iProf = 0
+    while(!foundProf && iProf < profiles.length){
+      if(profiles[iProf]._user == like_user_id) {
+        foundProf = true
+        profileObj = profiles[iProf]
         // console.log("FOUND FOUND")
       }
-      i++
+      iProf++
+    }
+    console.log("ProfileOBK", profileObj)
+    // let pictureObj = _.find(pictures, {'.image._id': like_picture_id}) //.find doesn0t seem to go 2 levels deep
+    let foundPic = false
+    let iPic = 0
+    while(!foundPic && iPic < pictures.length){
+      if(pictures[iPic].image._id == like_picture_id) {
+        foundPic = true
+        pictureObj = pictures[iPic]
+        // console.log("FOUND FOUND")
+      }
+      iPic++
     }
     // console.log("pictureObj", pictureObj)
     let obj = {}
     obj.picture = pictureObj
     obj.user = profileObj
     obj.like = like
-    console.log(obj)
+    // console.log(obj)
     coso.push(obj)
   })
   return coso
